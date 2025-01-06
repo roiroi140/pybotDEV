@@ -287,7 +287,7 @@ async def save(interaction: discord.Interaction, value: str):
     })
     
     save_data(data)
-    await interaction.response.send_message(f"Value '{value}' has been saved for user {interaction.user.name}."
+    await interaction.response.send_message(f"Value '{value}' has been saved for user {interaction.user.name}.")
 # シーザー暗号コマンド
 @bot.command()
 async def encrypt(ctx: commands.Context, shift: int, *, text: str):
