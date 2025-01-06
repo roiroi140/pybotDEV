@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from discord.utils import get
 import discord
 import random
+import json
+from datetime import datetime
 
 # Intents設定
 intents = discord.Intents.default()
