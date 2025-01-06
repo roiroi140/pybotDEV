@@ -36,11 +36,11 @@ ROLE_ID = 1322869157070377003
 DATA_FILE = "globalchat.json"
 
 # Bot起動時のイベント
-"""@bot.event
+@bot.event
 async def on_ready():
     print(f"discord.py version: {discord.__version__} bot ok owner_id = {OWNER_ID}")
     await bot.tree.sync()
-    await greet()
+"""    await greet()
 
 async def greet():
     channel = bot.get_channel(CHANNEL_ID)
