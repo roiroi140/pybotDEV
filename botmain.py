@@ -35,6 +35,25 @@ ROLE_ID = 1322869157070377003
 # JSON ID
 DATA_FILE = "globalchat.json"
 
+class FavoriteFoodModal(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__(
+            "好きな食べ物は何ですか？",
+            timeout=None,
+        )
+
+        self.food = nextcord.ui.TextInput(
+            label="食べ物",
+            style=nextcord.TextInputStyle.short,
+            placeholder="おにぎり",
+            required=True,
+        )
+        self.add_item(self.food)
+
+    async def callback(self, interaction: Interaction) -> None:
+        await interaction.response.send_message(f"好きな食べ物は{self.food.value}なんだね！")
+        return
+
 # Bot起動時のイベント
 @bot.event
 async def on_ready():
@@ -208,6 +227,11 @@ async def get_message(ctx: commands.Context, channel: discord.TextChannel):
             file.write(f"{message.author.name}: {jst.strftime('%Y/%m/%d %H:%M:%S')}\n{message.content}\n\n")
 
     await ctx.send(file=discord.File("messages.txt"))
+
+@bot.tree.command(name="test", description="テストモーダル")
+async def food_slash(interaction: Interaction):
+    modal = FavoriteFoodModal()
+    await interaction.response.send_modal(modal=modal)
 
 # オーナー限定コマンド
 # ミュートコマンド
