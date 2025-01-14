@@ -8,6 +8,7 @@ import discord
 import random
 import json
 from datetime import datetime
+import nextcord
 
 # Intents設定
 intents = discord.Intents.default()
