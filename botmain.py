@@ -36,24 +36,23 @@ ROLE_ID = 1322869157070377003
 # JSON ID
 DATA_FILE = "globalchat.json"
 
-class FavoriteFoodModal(nextcord.ui.Modal):
+class Modal(discord.ui.Modal):
     def __init__(self):
         super().__init__(
-            "好きな食べ物は何ですか？",
-            timeout=None,
+            title="なにか入力するところ",
+            timeout=None
         )
-
-        self.food = nextcord.ui.TextInput(
-            label="食べ物",
-            style=nextcord.TextInputStyle.short,
-            placeholder="おにぎり",
-            required=True,
+        
+        self.answer = discord.ui.TextInput(
+            label="なんか入力してみてね！",
+            style=discord.TextStyle.short,
+            placeholder="例:HelloWorld!",
+            required=True
         )
-        self.add_item(self.food)
+        self.add_item(self.answer)
 
-    async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.send_message(f"好きな食べ物は{self.food.value}なんだね！")
-        return
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        return await interaction.response.send_message("あなたが入力したものはこれですね！\n{}".format(self.answer.value)")
 
 # Bot起動時のイベント
 @bot.event
