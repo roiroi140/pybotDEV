@@ -6,9 +6,6 @@ from datetime import datetime, timedelta
 from discord.utils import get
 import discord
 import random
-import json
-from datetime import datetime
-import nextcord
 
 # Intents設定
 intents = discord.Intents.default()
@@ -33,33 +30,13 @@ TARGET_USER_ID = 966448197310504970
 CHANNEL_ID = 1321266748506243113
 # ROLL ID
 ROLE_ID = 1322869157070377003
-# JSON ID
-DATA_FILE = "globalchat.json"
-
-class Modal(discord.ui.Modal):
-    def __init__(self):
-        super().__init__(
-            title="なにか入力するところ",
-            timeout=None
-        )
-        
-        self.answer = discord.ui.TextInput(
-            label="なんか入力してみてね！",
-            style=discord.TextStyle.short,
-            placeholder="例:HelloWorld!",
-            required=True
-        )
-        self.add_item(self.answer)
-
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        return await interaction.response.send_message("あなたが入力したものはこれですね！\n{}".format(self.answer.value)")
 
 # Bot起動時のイベント
 @bot.event
 async def on_ready():
     print(f"discord.py version: {discord.__version__} bot ok owner_id = {OWNER_ID}")
     await bot.tree.sync()
-"""    await greet()
+    await greet()
 
 async def greet():
     channel = bot.get_channel(CHANNEL_ID)
@@ -67,7 +44,7 @@ async def greet():
         print(f"Error: チャンネル ID {CHANNEL_ID} が見つかりません。")
         return
 
-    await channel.send("こんにちは！ボットが起動しました。")"""
+    await channel.send("こんにちは！ボットが起動しました。")
   
 
 # メッセージイベント
@@ -142,24 +119,10 @@ def caesar_cipher(text: str, shift: int) -> str:
         else:
             result.append(char)
     return ''.join(result)
-# 関数など
+
 # オーナーチェック関数
 def is_owner(interaction: discord.Interaction):
     return interaction.user.id == OWNER_ID
-# JSONデータを読み込む関数
-def load_data():
-    try:
-        with open(DATA_FILE, "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {}
-    except json.JSONDecodeError:
-        return {}
-
-# JSONデータを書き込む関数
-def save_data(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=4)
 
 # 挨拶コマンド
 @bot.tree.command(name='hello', description='挨拶')
@@ -228,11 +191,6 @@ async def get_message(ctx: commands.Context, channel: discord.TextChannel):
 
     await ctx.send(file=discord.File("messages.txt"))
 
-@bot.tree.command(name="test", description="テストモーダル")
-async def food_slash(interaction: Interaction):
-    modal = FavoriteFoodModal()
-    await interaction.response.send_modal(modal=modal)
-
 # オーナー限定コマンド
 # ミュートコマンド
 @bot.tree.command(name="mute", description="オーナーのみ使用可能なミュートコマンド")
@@ -294,24 +252,6 @@ async def ban_everywhere(interaction: discord.Interaction, member: discord.Membe
 
     await interaction.response.send_message(success_message + "\n" + failed_message, ephemeral=True)
 # オーナー限定コマンド終了
-#globalchattest
-@bot.tree.command(name="save", description="Save a value to the JSON file")
-async def save(interaction: discord.Interaction, value: str):
-    data = load_data()
-    
-    # コマンド情報を保存
-    user_id = str(interaction.user.id)
-    if user_id not in data:
-        data[user_id] = []
-    
-    data[user_id].append({
-        "command": "save",
-        "value": value,
-        "timestamp": datetime.utcnow().isoformat()
-    })
-    
-    save_data(data)
-    await interaction.response.send_message(f"Value '{value}' has been saved for user {interaction.user.name}.")
 # シーザー暗号コマンド
 @bot.command()
 async def encrypt(ctx: commands.Context, shift: int, *, text: str):
