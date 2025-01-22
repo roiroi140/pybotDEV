@@ -41,7 +41,7 @@ DATA_FILE = "globalchat.json"
 async def on_ready():
     print(f"discord.py version: {discord.__version__} bot ok owner_id = {OWNER_ID}")
     await bot.tree.sync()
-    await greet()
+"""    await greet()
 
 async def greet():
     channel = bot.get_channel(CHANNEL_ID)
@@ -49,7 +49,7 @@ async def greet():
         print(f"Error: チャンネル ID {CHANNEL_ID} が見つかりません。")
         return
 
-    await channel.send("こんにちは！ボットが起動しました。")
+    await channel.send("こんにちは！ボットが起動しました。")"""
   
 
 # メッセージイベント
