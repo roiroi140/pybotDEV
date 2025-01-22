@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from discord.utils import get
 import discord
 import random
+import json
+from datetime import datetime
 
 # Intents設定
 intents = discord.Intents.default()
@@ -30,6 +32,9 @@ TARGET_USER_ID = 966448197310504970
 CHANNEL_ID = 1321266748506243113
 # ROLL ID
 ROLE_ID = 1322869157070377003
+# json PASS
+DATA_FILE = "globalchat.json"
+
 
 # Bot起動時のイベント
 @bot.event
@@ -73,6 +78,39 @@ async def on_member_join(member):
             if channel:
                 await channel.send(f"{member.name} さんをキック中にエラーが発生しました: {e}")
 
+# JSONデータを読み込む関数
+def load_data():
+    try:
+        with open(DATA_FILE, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+
+# JSONデータを書き込む関数
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+# スラッシュコマンドの登録
+@bot.tree.command(name="save", description="Save a value to the JSON file")
+async def save(interaction: discord.Interaction, value: str):
+    data = load_data()
+    
+    # コマンド情報を保存
+    user_id = str(interaction.user.id)
+    if user_id not in data:
+        data[user_id] = []
+    
+    data[user_id].append({
+        "command": "save",
+        "value": value,
+        "timestamp": datetime.utcnow().isoformat()
+    })
+    
+    save_data(data)
+    await interaction.response.send_message(f"Value '{value}' has been saved for user {interaction.user.name}.")
 
 # AES暗号化コマンド
 @bot.command()
