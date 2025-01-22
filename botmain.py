@@ -94,7 +94,7 @@ def save_data(data):
         json.dump(data, f, indent=4)
 
 # スラッシュコマンドの登録
-@bot.tree.command(name="save", description="Save a value to the JSON file")
+@bot.tree.command(name="globalchat", description="グローバルチャットに追加します。ベータ版")
 async def save(interaction: discord.Interaction, value: str):
     data = load_data()
     
