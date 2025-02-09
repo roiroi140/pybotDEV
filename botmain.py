@@ -93,6 +93,48 @@ def save_data(data):
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+# VCのタイマー開始時間を記録する辞書
+vc_timers = {}
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}")
+    try:
+        synced = await bot.tree.sync()
+        print(f"Synced {len(synced)} commands.")
+    except Exception as e:
+        print(f"Failed to sync commands: {e}")
+
+@bot.tree.command(name="start_timer", description="VCでの滞在時間の計測を開始")
+async def start_timer(interaction: discord.Interaction):
+    user = interaction.user
+
+    # ユーザーがVCにいるか確認
+    if user.voice and user.voice.channel:
+        vc_timers[user.id] = datetime.datetime.utcnow()
+        await interaction.response.send_message(f"VCタイマーを開始しました！VCを抜けると滞在時間が通知されます。")
+    else:
+        await interaction.response.send_message("VCに入ってからコマンドを実行してください！", ephemeral=True)
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    user_id = member.id
+
+    # ユーザーがVCから抜けた場合
+    if before.channel is not None and after.channel is None:
+        if user_id in vc_timers:
+            start_time = vc_timers.pop(user_id)  # タイマー開始時間を取得して削除
+            duration = datetime.datetime.utcnow() - start_time
+
+            hours, remainder = divmod(duration.total_seconds(), 3600)
+            minutes, seconds = divmod(remainder, 60)
+
+            # ユーザーにDMで通知
+            try:
+                await member.send(f"VCから退出しました！滞在時間: {int(hours)}時間 {int(minutes)}分 {int(seconds)}秒")
+            except discord.Forbidden:
+                print(f"{member.name} にDMを送信できませんでした。")
+
 # スラッシュコマンドの登録
 @bot.tree.command(name='globalchat', description='グローバルチャットに追加します。ベータ版')
 async def save(interaction: discord.Interaction, value: str):
